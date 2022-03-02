@@ -1,6 +1,9 @@
 PS.
+
 修复剪贴板中文乱码问题
+
 1.新增core/stringconvert.js
+
 2.修改core/rfb.js 中的 clipboardPasteFrom(text)函数 以及 _handleServerCutText() 函数
 
 
