@@ -1,3 +1,5 @@
+//https://blog.csdn.net/xyzdwf/article/details/82220987
+
 //ArrayBuffer转字符串
 export function ab2str(u,f) {
     var b = new Blob([u]);
