@@ -1,3 +1,10 @@
+PS.
+修复剪贴板中文乱码问题
+1.新增core/stringconvert.js
+2.修改core/rfb.js 中的 clipboardPasteFrom(text)函数 以及 _handleServerCutText() 函数
+
+
+
 ## noVNC: HTML VNC Client Library and Application
 
 [![Test Status](https://github.com/novnc/noVNC/workflows/Test/badge.svg)](https://github.com/novnc/noVNC/actions?query=workflow%3ATest)
@@ -19,15 +26,20 @@ for a more complete list with additional info and links.
 
 ### Table of Contents
 
-- [News/help/contact](#newshelpcontact)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Browser Requirements](#browser-requirements)
-- [Server Requirements](#server-requirements)
-- [Quick Start](#quick-start)
-- [Installation from Snap Package](#installation-from-snap-package)
-- [Integration and Deployment](#integration-and-deployment)
-- [Authors/Contributors](#authorscontributors)
+- [noVNC: HTML VNC Client Library and Application](#novnc-html-vnc-client-library-and-application)
+  - [Description](#description)
+  - [Table of Contents](#table-of-contents)
+  - [News/help/contact](#newshelpcontact)
+  - [Features](#features)
+  - [Screenshots](#screenshots)
+  - [Browser Requirements](#browser-requirements)
+  - [Server Requirements](#server-requirements)
+  - [Quick Start](#quick-start)
+  - [Installation from Snap Package](#installation-from-snap-package)
+    - [Running noVNC](#running-novnc)
+    - [Running as a Service (Daemon)](#running-as-a-service-daemon)
+  - [Integration and Deployment](#integration-and-deployment)
+  - [Authors/Contributors](#authorscontributors)
 
 ### News/help/contact
 

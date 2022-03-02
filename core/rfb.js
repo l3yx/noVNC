@@ -35,6 +35,8 @@ import TightPNGDecoder from "./decoders/tightpng.js";
 import ZRLEDecoder from "./decoders/zrle.js";
 import JPEGDecoder from "./decoders/jpeg.js";
 
+import {str2ab,ab2str} from "./stringconvert.js"
+
 // How many seconds to wait for a disconnect to finish
 const DISCONNECT_TIMEOUT = 3;
 const DEFAULT_BACKGROUND = 'rgb(40, 40, 40)';
@@ -455,13 +457,10 @@ export default class RFB extends EventTargetMixin {
             this._clipboardText = text;
             RFB.messages.extendedClipboardNotify(this._sock, [extendedClipboardFormatText]);
         } else {
-            let data = new Uint8Array(text.length);
-            for (let i = 0; i < text.length; i++) {
-                // FIXME: text can have values outside of Latin1/Uint8
-                data[i] = text.charCodeAt(i);
-            }
-
-            RFB.messages.clientCutText(this._sock, data);
+            let that_sock = this._sock;
+            str2ab(text,function(ab){
+                RFB.messages.clientCutText(that_sock, new Int8Array(ab));
+            })
         }
     }
 
@@ -1892,16 +1891,32 @@ export default class RFB extends EventTargetMixin {
         if (this._sock.rQwait("ServerCutText content", Math.abs(length), 8)) { return false; }
 
         if (length >= 0) {
-            //Standard msg
-            const text = this._sock.rQshiftStr(length);
+            if (typeof(length) === 'undefined') { length = this._sock.rQlen; }
+            let text_ab = new Int8Array(0);
+            for (let i = 0; i < length; i += 4096) {
+                let part = this._sock.rQshiftBytes(Math.min(4096, length - i));
+                part = new Int8Array(part);
+                
+                let oldLen = text_ab.length;
+                text_ab = new Int8Array(oldLen + part.length);
+                text_ab.set(text_ab);
+                text_ab.set(part,oldLen);
+            }
+
             if (this._viewOnly) {
                 return true;
             }
 
-            this.dispatchEvent(new CustomEvent(
-                "clipboard",
-                { detail: { text: text } }));
-
+            let that = this;
+            ab2str(text_ab,function(str){
+                let customEvent = new CustomEvent("clipboard",{ detail: { text: str } })
+                if (!that._listeners.has(customEvent.type)) {
+                    return true;
+                }
+                that._listeners.get(customEvent.type)
+                    .forEach(callback => callback.call(that, customEvent));
+                return !customEvent.defaultPrevented;
+            });
         } else {
             //Extended msg.
             length = Math.abs(length);
